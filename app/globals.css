@@ -10,6 +10,11 @@
   font-display: swap;
 }
 
+/* styles/globals.css */
+body {
+  font-family: var(--font-ibm-plex-mono);
+}
+
 @layer base {
   :root {
     --background: 0 0% 0%;

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Briefcase } from "lucide-react"
 
-export default function ExperienceTimeline({ experiences }) {
+export default function ExperienceTimeline({ experiences }:{ experiences: { title: string; company: string; period: string; description: string }[] }) {
   return (
     <div className="max-w-3xl mx-auto">
       {experiences.map((experience, index) => (
@@ -27,7 +27,7 @@ export default function ExperienceTimeline({ experiences }) {
 
           <div className="border-2 border-primary p-6 bg-background">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
-              <h3 className="text-xl font-mono text-primary">{experience.title.toUpperCase()}</h3>
+              <h3 className="text-xl font-mono text-primary">{experience.title}</h3>
               <span className="text-sm font-mono text-primary">{experience.period}</span>
             </div>
             <p className="text-foreground mb-4 font-mono">{experience.company}</p>

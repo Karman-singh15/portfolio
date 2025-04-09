@@ -4,7 +4,9 @@ import { useState } from "react"
 import Image from "next/image"
 import { ArrowUpRight, Github } from "lucide-react"
 
-export default function ProjectCard({ project }) {
+
+
+export default function ProjectCard({ project }: { project: { title: string; description: string; tags: string[]; github: string; link: string } }) {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
@@ -13,29 +15,19 @@ export default function ProjectCard({ project }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative overflow-hidden aspect-video border-b-2 border-primary">
-        <Image
-          src={project.image || "/placeholder.svg"}
-          alt={project.title}
-          fill
-          className={`object-cover transition-transform duration-700 ${isHovered ? "scale-110" : "scale-100"}`}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-      </div>
-
-      <div className="flex-grow p-6">
-        <h3 className="text-xl font-mono text-primary mb-2">{project.title.toUpperCase()}</h3>
-        <p className="text-foreground mb-4 font-mono">{project.description}</p>
+      <a href={project.title} className="flex-grow"><div className="flex-grow p-6">
+        <h2 className="text-xl font-mono text-primary mb-2">{project.title}</h2>
+        <p className="text-foreground mb-4 font-mono flex-grow">{project.description}</p>
         <div className="flex flex-wrap gap-2 mt-auto">
-          {project.tags.map((tag, index) => (
+          {project.tags.map((tag:string, index:number) => (
             <span key={index} className="px-2 py-1 border border-primary text-primary text-xs font-mono">
               {tag}
             </span>
           ))}
         </div>
-      </div>
+      </div></a>
 
-      <div className="p-6 pt-0 flex justify-between gap-4 border-t border-primary">
+      <div className="p-6 pt-2 flex justify-between gap-4 border-t border-primary">
         <a
           href={project.github}
           target="_blank"

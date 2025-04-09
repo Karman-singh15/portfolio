@@ -1,38 +1,28 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Code, Database, Layout, Server, Settings, Smartphone } from "lucide-react"
+import { Code, Database, Layout, Server, Settings, Smartphone, BrainCircuit, SquareDashedBottomCode } from "lucide-react"
 
 const skills = [
   {
-    category: "Frontend",
+    category: "web dev",
     icon: <Layout className="h-8 w-8 mb-4 text-primary" />,
-    items: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"],
+    items: ["React", "Next.js", "MongoDB", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js", "Firebase", "Node.js", "Express",],
   },
   {
-    category: "Backend",
-    icon: <Server className="h-8 w-8 mb-4 text-primary" />,
-    items: ["Node.js", "Express", "Python", "Django", "GraphQL", "RESTful APIs"],
+    category: "ai ml",
+    icon: <BrainCircuit className="h-8 w-8 mb-4 text-primary" />,
+    items: ["Python", "PyTorch", "TensorFlow", "Fast APIs"],
   },
   {
-    category: "Database",
-    icon: <Database className="h-8 w-8 mb-4 text-primary" />,
-    items: ["MongoDB", "PostgreSQL", "MySQL", "Firebase", "Redis"],
+    category: "languages",
+    icon: <SquareDashedBottomCode className="h-8 w-8 mb-4 text-primary" />,
+    items: ["Python", "C", "C++"],
   },
   {
-    category: "DevOps",
-    icon: <Settings className="h-8 w-8 mb-4 text-primary" />,
-    items: ["Docker", "AWS", "CI/CD", "Git", "GitHub Actions", "Vercel", "Netlify"],
-  },
-  {
-    category: "Mobile",
-    icon: <Smartphone className="h-8 w-8 mb-4 text-primary" />,
-    items: ["React Native", "Progressive Web Apps", "Responsive Design"],
-  },
-  {
-    category: "Other",
+    category: "other",
     icon: <Code className="h-8 w-8 mb-4 text-primary" />,
-    items: ["UI/UX Design", "Figma", "Jest", "Testing Library", "Storybook", "Webpack"],
+    items: ["Git", "GitHub", "Figma", "Vercel"],
   },
 ]
 
@@ -50,7 +40,7 @@ export default function SkillsSection() {
         >
           <div className="text-center mb-4">
             {skill.icon}
-            <h3 className="text-xl font-mono text-primary">{skill.category.toUpperCase()}</h3>
+            <h3 className="text-xl font-mono text-primary">{skill.category}</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {skill.items.map((item, itemIndex) => (
