@@ -16,7 +16,7 @@ export default function ProjectCard({ project }: { project: { title: string; des
       onMouseLeave={() => setIsHovered(false)}
     >
       <a href={project.title} className="flex-grow"><div className="flex-grow p-6">
-        <h2 className="text-xl font-mono text-primary mb-2">{project.title}</h2>
+        <h2 className="text-xl font-mono text-primary mb-2">"{project.title}"</h2>
         <p className="text-foreground mb-4 font-mono flex-grow">{project.description}</p>
         <div className="flex flex-wrap gap-2 mt-auto">
           {project.tags.map((tag:string, index:number) => (
