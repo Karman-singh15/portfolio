@@ -12,7 +12,7 @@ import ExperienceTimeline from "@/components/experience-timeline"
 export default function Portfolio() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [typedText, setTypedText] = useState("")
-  const fullText = "tech anthusiast"
+  const fullText = "tech enthusiast"
 
   useEffect(() => {
     let index = 0
