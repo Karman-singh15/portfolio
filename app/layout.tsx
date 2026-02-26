@@ -1,16 +1,23 @@
 import type { Metadata } from 'next'
+import localFont from 'next/font/local'
+import { Archivo } from 'next/font/google'
 import './globals.css'
-import { IBM_Plex_Mono } from 'next/font/google'
 
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ['400', '500', '700'], // Add weights as needed
+const archivoBlack = localFont({
+  src: '../public/fonts/Archivo_Black,Bebas_Neue/Archivo_Black/ArchivoBlack-Regular.ttf',
+  variable: '--font-archivo-black',
+  display: 'swap',
+})
+
+const archivo = Archivo({
   subsets: ['latin'],
-  variable: '--font-ibm-plex-mono',
+  variable: '--font-archivo',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'Karman Singh'
+  title: 'Karman Singh',
+  description: 'Portfolio of Karman Singh',
 }
 
 export default function RootLayout({
@@ -19,8 +26,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={ibmPlexMono.variable}>
-      <body>{children}</body>
+    <html lang="en">
+      <body className={`${archivoBlack.variable} ${archivo.variable} antialiased selection:bg-[#4CAF50]/30 selection:text-white`}>
+        {children}
+      </body>
     </html>
   )
 }
