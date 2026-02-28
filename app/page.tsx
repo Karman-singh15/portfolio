@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Github, Twitter, Linkedin, Mail } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 
 export default function Portfolio() {
   const sections = [
@@ -68,98 +68,153 @@ export default function Portfolio() {
   const activeIndex = sections.findIndex(s => s.id === activeSection);
   const nextSection = activeIndex >= 0 && activeIndex < sections.length - 1 ? sections[activeIndex + 1] : null;
 
+  // --- Scroll Animation Setup for Hero ---
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Phase 1 (0 -> 0.3): Header fades out and moves up, other items fade out
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
+  const otherItemsOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const otherItemsY = useTransform(scrollYProgress, [0, 0.15], [0, 50]);
+
+  // Phase 1->2 (0.1 -> 0.4): "About Me" heading moves up and scales to become the new header
+  const aboutMeY = useTransform(scrollYProgress, [0.1, 0.4], [0, -220]);
+  const aboutMeScale = useTransform(scrollYProgress, [0.1, 0.4], [1, 2.5]);
+
+  // Phase 2 (0.45 -> 0.6): "About Me" description text fades in underneath
+  const aboutDescOpacity = useTransform(scrollYProgress, [0.45, 0.6, 0.85, 0.95], [0, 1, 1, 0]);
+  const aboutDescY = useTransform(scrollYProgress, [0.45, 0.6], [30, -30]);
+
+  // Phase 3 (0.85 -> 0.95): The "About Me" header (that replaced Karman Singh) fades away
+  const aboutMeOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0]);
+
+  // Handle pointer events for inactive items
+  const [pointerEvents, setPointerEvents] = useState<"auto" | "none">("auto");
+  useEffect(() => {
+    return scrollYProgress.onChange((v) => {
+      setPointerEvents(v > 0.1 ? "none" : "auto");
+    });
+  }, [scrollYProgress]);
+
   return (
     <main className="bg-[#141414] text-[#e5e5e5] relative">
 
-      {/* Hero Section */}
-      <section id="hero" className="w-full min-h-[100dvh] relative flex items-center p-8 md:p-20 lg:p-32 max-w-7xl mx-auto">
+      {/* Hero Section Scroll Spacer */}
+      <div ref={heroRef} className="w-full h-[300vh]">
+        {/* Sticky Hero Content */}
+        <section id="hero" className="sticky top-0 w-full h-screen flex flex-col justify-center p-8 md:p-20 lg:p-32 max-w-7xl mx-auto overflow-hidden">
 
-        {/* Top Right Scroll Text */}
-        <div className="absolute top-8 right-8 md:top-12 md:right-12 flex items-start gap-2 text-neutral-400 group cursor-pointer hover:text-neutral-300 transition-colors pointer-events-none">
-          <div className="mt-1 opacity-70 animate-bounce">
-            <svg width="12" height="28" viewBox="0 0 18 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 2L9 38M9 38L2 31M9 38L16 31" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="text-[10px] md:text-xs leading-none tracking-wide flex flex-col pt-1 opacity-70">
-            <span>scroll to find</span>
-            <span>out about me</span>
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="flex flex-col w-full max-w-2xl mx-auto md:ml-32">
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex items-start gap-5 md:gap-8 mb-16 md:mb-20"
-          >
-            {/* Big Green Chevron */}
-            <div className="mt-3 md:mt-4 text-[#3ba55d] shrink-0">
-              <svg width="45" height="75" viewBox="0 0 45 75" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[30px] md:w-[45px]">
-                <path d="M5 5L38 37.5L5 70" stroke="currentColor" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Top Right Scroll Text */}
+          <motion.div style={{ opacity: headerOpacity }} className="absolute z-10 top-8 right-8 md:top-12 md:right-12 flex items-start gap-2 text-neutral-400 group cursor-pointer hover:text-neutral-300 transition-colors pointer-events-none">
+            <div className="mt-1 opacity-70 animate-bounce">
+              <svg width="12" height="28" viewBox="0 0 18 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 2L9 38M9 38L2 31M9 38L16 31" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-
-            <div className="flex flex-col">
-              <h1 className="text-5xl md:text-7xl font-archivo-black tracking-tight text-[#f3f3f3] mb-2 leading-none">
-                Karman Singh
-              </h1>
-              <p className="text-xl md:text-2xl font-archivo-black text-neutral-400 mb-6">
-                19 y/o cs undergrad
-              </p>
-
-              {/* Social Links */}
-              <div className="flex items-center gap-4 md:gap-5 pl-1 mt-2">
-                <a href="https://github.com/Karman-singh15" target="_blank" rel="noopener noreferrer" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
-                  <Github className="w-6 h-6 md:w-7 md:h-7" />
-                  <span className="sr-only">GitHub</span>
-                </a>
-                <a href="https://x.com/KarmanSingh1505" target="_blank" rel="noopener noreferrer" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
-                  <Twitter className="w-6 h-6 md:w-7 md:h-7" />
-                  <span className="sr-only">Twitter</span>
-                </a>
-                <a href="https://linkedin.com/in/karman-singh-151610217" target="_blank" rel="noopener noreferrer" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
-                  <Linkedin className="w-6 h-6 md:w-7 md:h-7" />
-                  <span className="sr-only">LinkedIn</span>
-                </a>
-                <a href="mailto:karmansw15@gmail.com" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
-                  <Mail className="w-6 h-6 md:w-7 md:h-7" />
-                  <span className="sr-only">Email</span>
-                </a>
-              </div>
+            <div className="text-[10px] md:text-xs leading-none tracking-wide flex flex-col pt-1 opacity-70">
+              <span>scroll to find</span>
+              <span>out about me</span>
             </div>
           </motion.div>
 
-          {/* Menu Items */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col gap-8 md:gap-10 pl-6 md:pl-16"
-          >
-            {sections.map((item, i) => (
-              <div
-                key={i}
-                onClick={() => scrollToSection(item.id)}
-                className="flex items-center gap-5 md:gap-7 group cursor-pointer w-max"
-              >
-                <div className="text-[#3ba55d] shrink-0 transition-transform duration-300 group-hover:translate-x-2">
-                  <svg width="22" height="38" viewBox="0 0 22 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[16px] md:w-[22px]">
-                    <path d="M4 4L18 19L4 34" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <span className="text-xl md:text-3xl font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors">
-                  {item.title}
-                </span>
-              </div>
-            ))}
-          </motion.div>
+          {/* Main Content Area */}
+          <div className="flex flex-col w-full max-w-2xl mx-auto md:ml-32">
 
-        </div>
-      </section>
+            <motion.div
+              style={{ opacity: headerOpacity, y: headerY }}
+              className="flex items-start gap-5 md:gap-8 mb-16 md:mb-20"
+            >
+              {/* Big Green Chevron */}
+              <div className="mt-3 md:mt-4 text-[#3ba55d] shrink-0">
+                <svg width="45" height="75" viewBox="0 0 45 75" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[30px] md:w-[45px]">
+                  <path d="M5 5L38 37.5L5 70" stroke="currentColor" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+
+              <div className="flex flex-col">
+                <h1 className="text-5xl md:text-7xl font-archivo-black tracking-tight text-[#f3f3f3] mb-2 leading-none">
+                  Karman Singh
+                </h1>
+                <p className="text-xl md:text-2xl font-archivo-black text-neutral-400 mb-6">
+                  19 y/o cs undergrad
+                </p>
+
+                {/* Social Links */}
+                <div className="flex items-center gap-4 md:gap-5 pl-1 mt-2">
+                  <a href="https://github.com/Karman-singh15" target="_blank" rel="noopener noreferrer" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
+                    <Github className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="sr-only">GitHub</span>
+                  </a>
+                  <a href="https://x.com/KarmanSingh1505" target="_blank" rel="noopener noreferrer" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
+                    <Twitter className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="sr-only">Twitter</span>
+                  </a>
+                  <a href="https://linkedin.com/in/karman-singh-151610217" target="_blank" rel="noopener noreferrer" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
+                    <Linkedin className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="sr-only">LinkedIn</span>
+                  </a>
+                  <a href="mailto:karmansw15@gmail.com" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
+                    <Mail className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="sr-only">Email</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Menu Items */}
+            <motion.div
+              className="flex flex-col gap-8 md:gap-10 pl-6 md:pl-16 relative"
+            >
+              {sections.map((item, i) => {
+                const isAboutMe = i === 0;
+                return (
+                  <div key={i} className={isAboutMe ? "relative" : ""}>
+                    <motion.div
+                      style={isAboutMe ? {
+                        y: aboutMeY,
+                        scale: aboutMeScale,
+                        opacity: aboutMeOpacity,
+                        transformOrigin: "left top"
+                      } : {
+                        y: otherItemsY,
+                        opacity: otherItemsOpacity,
+                        pointerEvents: pointerEvents
+                      }}
+                      onClick={() => scrollToSection(item.id)}
+                      className="flex items-center gap-5 md:gap-7 group cursor-pointer w-max"
+                    >
+                      <div className="text-[#3ba55d] shrink-0 transition-transform duration-300 group-hover:translate-x-2">
+                        <svg width="22" height="38" viewBox="0 0 22 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[16px] md:w-[22px]">
+                          <path d="M4 4L18 19L4 34" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <span className="text-xl md:text-3xl font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors">
+                        {item.title}
+                      </span>
+                    </motion.div>
+
+                    {isAboutMe && (
+                      <motion.div
+                        style={{ opacity: aboutDescOpacity, y: aboutDescY }}
+                        className="absolute top-[120px] md:top-[140px] left-0 md:left-2 w-[250%] md:w-[150%] max-w-xl pointer-events-none"
+                      >
+                        <p className="text-lg md:text-xl font-archivo text-neutral-400 leading-relaxed pr-8 md:pl-2">
+                          {item.content}
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
+                )
+              })}
+            </motion.div>
+
+          </div>
+        </section>
+      </div>
 
       {/* Dynamic Content Sections */}
       <div className="w-full flex flex-col pb-40">
