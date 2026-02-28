@@ -4,11 +4,82 @@ import React, { useState, useEffect, useRef } from "react"
 import { Github, Twitter, Linkedin, Mail } from "lucide-react"
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion"
 
+function Starfield() {
+  const [stars, setStars] = useState({ layer1: "", layer2: "", layer3: "" });
+
+  useEffect(() => {
+    const generateStars = (count: number, maxSpread: number) => {
+      let shadows = "";
+      for (let i = 0; i < count; i++) {
+        // distribute them randomly across a large vertical scrollable area (e.g. 5000px)
+        const x = Math.floor(Math.random() * 100);
+        const y = Math.floor(Math.random() * maxSpread);
+        shadows += `${x}vw ${y}px #FFF${i === count - 1 ? "" : ", "}`;
+      }
+      return shadows;
+    };
+
+    // Layer 1: Background (tiny, numerous, dim, moving slow)
+    // Layer 2: Midground (medium, fewer, normal, moving medium)
+    // Layer 3: Foreground (large, sparse, bright, moving fast)
+    setStars({
+      // 5000 is an arbitrary large height for them to wrap around if animated.
+      layer1: generateStars(400, 3000),
+      layer2: generateStars(150, 3000),
+      layer3: generateStars(50, 3000),
+    });
+  }, []);
+
+  if (!stars.layer1) return null;
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-[#141414]">
+      {/* 
+        We use an absolute div that drifts upwards and repeats. 
+        A clean way is to translateY iteratively using framer motion or CSS keyframes. 
+      */}
+      <style suppressHydrationWarning>{`
+        @keyframes driftUp {
+          from { transform: translateY(0px); }
+          to { transform: translateY(-3000px); }
+        }
+        .star-layer {
+          width: 100%;
+          height: 3000px;
+          position: absolute;
+          top: 0; left: 0;
+          animation: driftUp linear infinite;
+        }
+        .l1 { box-shadow: ${stars.layer1}; width: 1px; height: 1px; opacity: 0.15; animation-duration: 150s; }
+        .l2 { box-shadow: ${stars.layer2}; width: 2px; height: 2px; opacity: 0.4; animation-duration: 90s; }
+        .l3 { box-shadow: ${stars.layer3}; width: 3px; height: 3px; opacity: 0.8; animation-duration: 40s; }
+
+        /* The ::after clones the starfield right below it to loop infinitely without tearing */
+        .l1::after { content: " "; position: absolute; top: 3000px; width: 1px; height: 1px; box-shadow: ${stars.layer1}; }
+        .l2::after { content: " "; position: absolute; top: 3000px; width: 2px; height: 2px; box-shadow: ${stars.layer2}; }
+        .l3::after { content: " "; position: absolute; top: 3000px; width: 3px; height: 3px; box-shadow: ${stars.layer3}; }
+
+        /* Dim the center of the screen to give a 3D tunnel effect */
+        .vignette-center {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at center, rgba(20,20,20,0.8) 0%, rgba(20,20,20,0) 60%);
+          z-index: 10;
+        }
+      `}</style>
+      <div className="star-layer l1"></div>
+      <div className="star-layer l2"></div>
+      <div className="star-layer l3"></div>
+      <div className="vignette-center pointer-events-none"></div>
+    </div>
+  );
+}
+
 const sections = [
   {
     id: "about-me",
     title: "about me",
-    content: "Hi, I'm Karman. I love building things for the web and figuring out how complex systems work. In my free time I mostly procrastinate."
+    content: "Hi, I'm Karman. I love building things that interests me and figuring out how complex systems work. In my free time I mostly try not to procrastinate."
   },
   {
     id: "projects",
@@ -91,19 +162,6 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
     return 1;
   });
 
-  // Dynamically shift the Title to the left when scaled to close the massive gap
-  // At 2.5x scale, shifting -25 locally moves it -62.5px visually, placing it exactly at the 72px offset where the description text waits.
-  const titleX = useTransform(scrollYProgress, (v: number) => {
-    const i = Math.min(Math.floor(v / 0.2), 4);
-    const localV = (v - i * 0.2) / 0.2;
-    if (i === index) {
-      if (localV < 0.2) return -(localV / 0.2) * 25;
-      if (localV > 0.8) return -25 + ((localV - 0.8) / 0.2) * 25;
-      return -25;
-    }
-    return 0;
-  });
-
   return (
     <motion.div
       ref={itemRef}
@@ -116,9 +174,9 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
           <path d="M4 4L18 19L4 34" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </motion.div>
-      <motion.span style={{ x: titleX }} className="text-xl md:text-3xl font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors">
+      <span className="text-xl md:text-3xl font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors">
         {item.title}
-      </motion.span>
+      </span>
     </motion.div>
   );
 }
@@ -156,12 +214,12 @@ function SectionDescription({ content, index, scrollYProgress }: any) {
       className="absolute top-0 left-0 w-full"
     >
       {/* 
-        Alignment calculation update (per user mockup):
-        User wants the text aligned roughly with the gap between the chevron and the text, rather than the text itself.
-        Chevron container width when scaled = ~55px.
-        Setting padding to 72px aligns it just past the chevron in the empty space.
+        Alignment calculation update (aligning description directly with title "a"):
+        Desktop Title Left Position offset: scalable Chevron (w-[22px] * 0.6 shrink * 2.5x container) + Gap (gap-8: 32px * 2.5x) => 33px + 80px = ~113px
+        +15px adjustment based on browser bounding box tests to hit exact 'a' character edge = 135px.
+        Mobile Title Left Position offset: scalable Chevron (w-[16px] * 0.6 * 2.5x) + Gap (gap-5: 20px * 2.5x) => 24px + 50px = ~74px.
       */}
-      <p className="text-lg md:text-xl font-archivo text-neutral-400 leading-relaxed pr-8 pl-12 md:pl-[72px]">
+      <p className="text-lg md:text-xl font-archivo text-neutral-400 leading-relaxed pr-8 md:pr-12 pl-[74px] md:pl-[135px]">
         {content}
       </p>
     </motion.div>
@@ -215,7 +273,8 @@ export default function Portfolio() {
   const nextSection = activeIndex < sections.length - 1 ? sections[activeIndex + 1] : null;
 
   return (
-    <main className="bg-[#141414] text-[#e5e5e5] relative">
+    <main className="text-[#e5e5e5] relative text-shadow-sm min-h-screen">
+      <Starfield />
 
       {/* Hero Section Mega Scroll Spacer (Allows 7.5 full screen scrolls = 1500vh to slow things down) */}
       <div ref={heroRef} className="w-full h-[1500vh]">
@@ -297,7 +356,7 @@ export default function Portfolio() {
             {/* Absolute Description Text Layer */}
             {/* The active list item moves -220px Up relative to its container.
                 This block aligns perfectly underneath that resting spot. */}
-            <div className="absolute top-[120px] md:top-[180px] left-6 md:left-16 w-[250%] md:w-[150%] max-w-xl pointer-events-none">
+            <div className="absolute top-[120px] md:top-[180px] left-6 md:left-16 w-[calc(100vw-3rem)] sm:w-[150%] md:w-[150%] max-w-xl pointer-events-none">
               {sections.map((item, i) => (
                 <SectionDescription
                   key={i}
@@ -311,37 +370,6 @@ export default function Portfolio() {
           </div>
         </section>
       </div>
-
-      {/* Global Fixed Peeking Next Topic */}
-      <AnimatePresence mode="wait">
-        {nextSection && (
-          <motion.div
-            key={nextSection.id}
-            onClick={() => scrollToSection(activeIndex + 1)}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 0.7, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            whileHover={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed bottom-12 md:bottom-20 left-8 md:left-[5.5rem] lg:left-[8.5rem] flex flex-col gap-2 cursor-pointer group origin-left z-50 text-left"
-          >
-            <p className="text-[10px] md:text-xs font-archivo text-neutral-500 mb-1 ml-1 opacity-70 tracking-widest uppercase text-left">
-              up next
-            </p>
-            <div className="flex items-center gap-4 md:gap-5 w-max">
-              <div className="text-[#3ba55d] shrink-0 transition-transform duration-300 group-hover:translate-y-1">
-                <svg width="18" height="42" viewBox="0 0 18 42" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[10px] md:w-[14px]">
-                  <path d="M9 2L9 38M9 38L2 31M9 38L16 31" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <span className="text-lg md:text-2xl font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors">
-                {nextSection.title}
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
     </main>
   )
 }
