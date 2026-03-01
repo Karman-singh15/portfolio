@@ -3,6 +3,11 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Github, Twitter, Linkedin, Mail } from "lucide-react"
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion"
+import { ProjectsCarousel } from "@/components/ProjectsCarousel"
+import { AboutMe } from "@/components/sections/AboutMe"
+import { WorkExperience } from "@/components/sections/WorkExperience"
+import { GithubActivity } from "@/components/sections/GithubActivity"
+import { OpenSource } from "@/components/sections/OpenSource"
 
 function Starfield() {
   const [stars, setStars] = useState({ layer1: "", layer2: "", layer3: "" });
@@ -79,27 +84,27 @@ const sections = [
   {
     id: "about-me",
     title: "about me",
-    content: "Hi, I'm Karman. I love building things that interests me and figuring out how complex systems work. In my free time I mostly try not to procrastinate."
+    content: (props: any) => <AboutMe {...props} />
   },
   {
     id: "projects",
     title: "projects",
-    content: "A collection of my recent work including a vehicle tracking system to help my mom with her deliveries, using Next.js and the TomTom API."
+    content: (props: any) => <ProjectsCarousel {...props} />
   },
   {
     id: "work-experience",
     title: "work experience",
-    content: "Member of the Technical Department at IEEE Comp Soc (2025 - Present). Currently looking for Summer '25 internships!"
+    content: (props: any) => <WorkExperience {...props} />
   },
   {
     id: "github-activity",
     title: "github activity",
-    content: "Check out my latest commits, PRs, and libraries I contribute to over on my GitHub profile."
+    content: (props: any) => <GithubActivity {...props} />
   },
   {
     id: "open-source",
     title: "open source",
-    content: "I strongly believe in open source software. Here's a look at some of the popular repositories I've helped improve."
+    content: (props: any) => <OpenSource {...props} />
   }
 ]
 
@@ -213,15 +218,9 @@ function SectionDescription({ content, index, scrollYProgress }: any) {
       style={{ opacity, y, pointerEvents: pointerEvents as any }}
       className="absolute top-0 left-0 w-full"
     >
-      {/* 
-        Alignment calculation update (aligning description directly with title "a"):
-        Desktop Title Left Position offset: scalable Chevron (w-[22px] * 0.6 shrink * 2.5x container) + Gap (gap-8: 32px * 2.5x) => 33px + 80px = ~113px
-        +15px adjustment based on browser bounding box tests to hit exact 'a' character edge = 135px.
-        Mobile Title Left Position offset: scalable Chevron (w-[16px] * 0.6 * 2.5x) + Gap (gap-5: 20px * 2.5x) => 24px + 50px = ~74px.
-      */}
-      <p className="text-lg md:text-xl font-archivo text-neutral-400 leading-relaxed pr-8 md:pr-12 pl-[74px] md:pl-[135px]">
-        {content}
-      </p>
+      <div className="w-full pr-8 md:pr-12">
+        {content({ scrollYProgress, index })}
+      </div>
     </motion.div>
   );
 }
@@ -353,10 +352,7 @@ export default function Portfolio() {
               ))}
             </div>
 
-            {/* Absolute Description Text Layer */}
-            {/* The active list item moves -220px Up relative to its container.
-                This block aligns perfectly underneath that resting spot. */}
-            <div className="absolute top-[120px] md:top-[180px] left-6 md:left-16 w-[calc(100vw-3rem)] sm:w-[150%] md:w-[150%] max-w-xl pointer-events-none">
+            <div className="absolute top-[120px] md:top-[180px] left-[199px] w-[80vw] pointer-events-none">
               {sections.map((item, i) => (
                 <SectionDescription
                   key={i}
