@@ -7,7 +7,7 @@ import 'react-tooltip/dist/react-tooltip.css';
 
 export function GithubActivity() {
     return (
-        <div className="w-full mt-2 pointer-events-auto">
+        <div className="w-full mt-2 [pointer-events:inherit]">
             <GitHubCalendar
                 username="Karman-singh15"
                 colorScheme="dark"
