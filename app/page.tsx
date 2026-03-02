@@ -114,8 +114,9 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
 
   useEffect(() => {
     if (itemRef.current) {
-      // Travel far enough to reach the -220px mark relative to the container, from wherever this item is naturally rendered
-      setTravelY(-220 - itemRef.current.offsetTop);
+      // Travel far enough to push this item to the top of the viewport-centred column
+      const topAnchor = Math.round(window.innerHeight * 0.22);
+      setTravelY(-topAnchor - itemRef.current.offsetTop);
     }
   }, []);
 
@@ -133,17 +134,6 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
     }
   });
 
-  const scale = useTransform(scrollYProgress, (v: number) => {
-    const i = Math.min(Math.floor(v / 0.2), 4);
-    const localV = (v - i * 0.2) / 0.2;
-    if (i === index) {
-      if (localV < 0.2) return 1 + (localV / 0.2) * 1.5;
-      if (localV > 0.8) return 2.5 - ((localV - 0.8) / 0.2) * 1.5;
-      return 2.5;
-    }
-    return 1;
-  });
-
   const opacity = useTransform(scrollYProgress, (v: number) => {
     const i = Math.min(Math.floor(v / 0.2), 4);
     const localV = (v - i * 0.2) / 0.2;
@@ -154,6 +144,21 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
       if (localV > 0.8) return (localV - 0.8) / 0.2;
       return 0;
     }
+  });
+
+  // Animate font-size instead of scale — this affects layout so text wraps naturally
+  const fontSize = useTransform(scrollYProgress, (v: number) => {
+    const mobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const basePx = mobile ? 20 : 30;   // text-xl / text-3xl
+    const maxPx = mobile ? 42 : 75;   // active heading size
+    const i = Math.min(Math.floor(v / 0.2), 4);
+    const localV = (v - i * 0.2) / 0.2;
+    if (i === index) {
+      if (localV < 0.2) return `${basePx + (localV / 0.2) * (maxPx - basePx)}px`;
+      if (localV > 0.8) return `${maxPx - ((localV - 0.8) / 0.2) * (maxPx - basePx)}px`;
+      return `${maxPx}px`;
+    }
+    return `${basePx}px`;
   });
 
   const chevronScale = useTransform(scrollYProgress, (v: number) => {
@@ -170,18 +175,21 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
   return (
     <motion.div
       ref={itemRef}
-      style={{ y, scale, opacity, transformOrigin: "left top" }}
+      style={{ y, opacity }}
       onClick={() => scrollToSection(index)}
-      className="flex items-center gap-5 md:gap-8 group cursor-pointer w-max"
+      className="flex items-center gap-3 md:gap-5 group cursor-pointer"
     >
       <motion.div style={{ scale: chevronScale }} className="text-[#3ba55d] shrink-0 transition-transform duration-300 group-hover:translate-x-2 origin-left">
         <svg width="22" height="38" viewBox="0 0 22 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[16px] md:w-[22px]">
           <path d="M4 4L18 19L4 34" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </motion.div>
-      <span className="text-xl md:text-3xl font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors">
+      <motion.span
+        style={{ fontSize }}
+        className="font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors leading-tight"
+      >
         {item.title}
-      </span>
+      </motion.span>
     </motion.div>
   );
 }
@@ -218,7 +226,7 @@ function SectionDescription({ content, index, scrollYProgress }: any) {
       style={{ opacity, y, pointerEvents: pointerEvents as any }}
       className="absolute top-0 left-0 w-full"
     >
-      <div className="w-full pr-8 md:pr-12">
+      <div className="w-full pr-4 md:pr-8">
         {content({ scrollYProgress, index })}
       </div>
     </motion.div>
@@ -279,7 +287,7 @@ export default function Portfolio() {
       <div ref={heroRef} className="w-full h-[1500vh]">
 
         {/* Pinned Viewport Container */}
-        <section className="sticky top-0 w-full min-h-[100dvh] relative flex items-center p-8 md:p-20 lg:p-32 max-w-7xl mx-auto overflow-hidden">
+        <section className="sticky top-0 w-full min-h-[100dvh] relative flex items-center px-6 py-8 md:px-16 md:py-16 lg:px-24 lg:py-20 max-w-7xl mx-auto overflow-hidden">
 
           {/* Top Right Scroll Text */}
           <div className="absolute top-8 right-8 md:top-12 md:right-12 flex items-start gap-2 text-neutral-400 group cursor-pointer hover:text-neutral-300 transition-colors pointer-events-none z-10">
@@ -295,7 +303,7 @@ export default function Portfolio() {
           </div>
 
           {/* Main Display Area */}
-          <div className="flex flex-col w-full max-w-2xl mx-auto md:ml-32 relative">
+          <div className="flex flex-col w-full max-w-3xl relative">
 
             {/* Header Area */}
             <motion.div
@@ -313,7 +321,7 @@ export default function Portfolio() {
                 <h1 className="text-5xl md:text-7xl font-archivo-black tracking-tight text-[#f3f3f3] mb-2 leading-none">
                   Karman Singh
                 </h1>
-                <p className="text-xl md:text-2xl font-archivo-black text-neutral-400 mb-6">
+                <p className="text-xl md:text-xl font-archivo-black text-neutral-400 mb-6">
                   19 y/o cs undergrad
                 </p>
 
@@ -340,7 +348,7 @@ export default function Portfolio() {
             </motion.div>
 
             {/* Content List Items */}
-            <div className="flex flex-col gap-8 md:gap-10 pl-6 md:pl-16 relative">
+            <div className="flex flex-col gap-8 md:gap-10 pl-4 md:pl-12 relative">
               {sections.map((item, i) => (
                 <MenuItem
                   key={i}
@@ -352,7 +360,7 @@ export default function Portfolio() {
               ))}
             </div>
 
-            <div className="absolute top-[120px] md:top-[180px] left-[199px] w-[80vw] pointer-events-none">
+            <div className="absolute top-[26%] md:top-[35%] left-8 md:left-[calc(3rem+2.5rem)] right-0 md:right-[-24rem] pointer-events-none">
               {sections.map((item, i) => (
                 <SectionDescription
                   key={i}

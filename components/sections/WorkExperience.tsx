@@ -17,7 +17,7 @@ export function WorkExperience() {
     return (
         <div className="w-full mt-2">
             {/* Scrollable entries — flex layout avoids overflow clipping on dots */}
-            <div className="overflow-y-auto max-h-[55vh] pr-4 [pointer-events:inherit] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+            <div className="overflow-y-auto max-h-[55vh] [pointer-events:inherit] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full">
                 {experiences.map((exp, i) => (
                     <div key={i} className="flex gap-6 group">
                         {/* Left column: dot + connecting line */}
@@ -42,7 +42,9 @@ export function WorkExperience() {
                 ))}
                 {/* Bottom terminating dot */}
                 <div className="flex gap-6">
-                    <span className="w-3 h-3 rounded-full bg-neutral-700 ring-4 ring-[#141414] shrink-0 ml-0.5"></span>
+                    <div className="flex flex-col items-center shrink-0">
+                        <span className="w-3 h-3 rounded-full bg-neutral-700 ring-4 ring-[#141414] shrink-0"></span>
+                    </div>
                 </div>
             </div>
         </div>
