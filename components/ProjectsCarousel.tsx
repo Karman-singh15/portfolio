@@ -7,18 +7,13 @@ export function ProjectsCarousel({ scrollYProgress, index }: { scrollYProgress: 
 
     // 12 Placeholders
     const dummyProjects = [
-        { id: 1, title: 'Project 1', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 2, title: 'Project 2', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 3, title: 'Project 3', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 4, title: 'Project 4', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 5, title: 'Project 5', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 6, title: 'Project 6', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 7, title: 'Project 7', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 8, title: 'Project 8', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 9, title: 'Project 9', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 10, title: 'Project 10', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 11, title: 'Project 11', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
-        { id: 12, title: 'Project 12', description: 'A short description of what this project does and the tech stack used.', githubLink: 'https://github.com', liveLink: 'https://example.com' },
+        { id: 1, title: 'desktop assistant', description: 'a desktop search feature which can help you browse through your files, folder, help you search on google, stackoverflow, yt and gemini with simple commands', githubLink: 'https://github.com/Karman-singh15/desktop-assistant', liveLink: 'https://x.com/KarmanSingh1505/status/1928883025594490939' },
+        { id: 2, title: 'explainer ai', description: 'a extension where if you ask a doubt to the llm it summarizes the answer there instead of making a new chat so you can keep the explainations at one place rather than scrollin back and forth', githubLink: 'https://github.com/Karman-singh15/explainer-ai', liveLink: '' },
+        { id: 3, title: 'news', description: 'a news app where you can see the articles of right,left and centrist wing to make your own informed desicion', githubLink: 'https://github.com/Karman-singh15/news', liveLink: '' },
+        { id: 4, title: 'arc', description: 'a app where you can track your progress in the gym,diet and personal goals', githubLink: 'https://github.com/Karman-singh15/arc', liveLink: '' },
+        { id: 5, title: 'driver name updater', description: 'a website which was made with the sole purpose of making my moms life simpler', githubLink: 'https://github.com/Karman-singh15/driver-name-updater', liveLink: 'https://driver-name-updater.vercel.app/' },
+        { id: 6, title: 'amul protein notifier', description: 'a code that scrapes the amul website to tell me the availability of its protein products through whatsapp', githubLink: 'https://github.com/Karman-singh15/amul-protein-notifier', liveLink: '' },
+
     ];
 
     return (

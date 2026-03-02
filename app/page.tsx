@@ -322,7 +322,7 @@ export default function Portfolio() {
                   Karman Singh
                 </h1>
                 <p className="text-xl md:text-xl font-archivo-black text-neutral-400 mb-6">
-                  19 y/o cs undergrad
+                  19 y/o CS undergrad
                 </p>
 
                 {/* Social Links */}

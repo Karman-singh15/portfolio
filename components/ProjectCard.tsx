@@ -14,7 +14,7 @@ export function ProjectCard({ title, description, githubLink, liveLink }: Projec
             {/* Top: title + description */}
             <div className="flex-1 flex flex-col gap-3 p-5 pb-6">
                 <h3 className="text-lg font-archivo font-bold text-[#e5e5e5] group-hover:text-white transition-colors leading-snug">
-                    {title}
+                    {`"${title}"`}
                 </h3>
                 {description && (
                     <p className="text-sm font-archivo text-neutral-500 leading-relaxed">
