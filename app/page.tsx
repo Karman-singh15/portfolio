@@ -150,7 +150,7 @@ function MenuItem({ item, index, scrollYProgress, scrollToSection }: any) {
   const fontSize = useTransform(scrollYProgress, (v: number) => {
     const mobile = typeof window !== "undefined" && window.innerWidth < 768;
     const basePx = mobile ? 20 : 30;   // text-xl / text-3xl
-    const maxPx = mobile ? 42 : 75;   // active heading size
+    const maxPx = mobile ? 32 : 75;   // active heading size — 32px keeps "work experience" on 1 line on mobile
     const i = Math.min(Math.floor(v / 0.2), 4);
     const localV = (v - i * 0.2) / 0.2;
     if (i === index) {
@@ -360,7 +360,7 @@ export default function Portfolio() {
               ))}
             </div>
 
-            <div className="absolute top-[26%] md:top-[35%] left-8 md:left-[calc(3rem+2.5rem)] right-0 md:right-[-24rem] pointer-events-none">
+            <div className="absolute top-[30%] md:top-[35%] left-8 md:left-[calc(3rem+2.5rem)] right-0 md:right-[-24rem] pointer-events-none">
               {sections.map((item, i) => (
                 <SectionDescription
                   key={i}
