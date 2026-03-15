@@ -339,7 +339,7 @@ export default function Portfolio() {
                     <Linkedin className="w-6 h-6 md:w-7 md:h-7" />
                     <span className="sr-only">LinkedIn</span>
                   </a>
-                  <a href="mailto:karmansw15@gmail.com" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
+                  <a href="mailto:karmanwork15@gmail.com" className="text-[#a68673] hover:text-[#c4a491] transition-colors">
                     <Mail className="w-6 h-6 md:w-7 md:h-7" />
                     <span className="sr-only">Email</span>
                   </a>
