@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Github, Twitter, Linkedin, Mail } from "lucide-react"
+import { Github, Twitter, Linkedin, Mail, FileText } from "lucide-react"
 import { CursorHalo } from "@/components/CursorHalo"
 import { SectionHeading } from "@/components/SectionHeading"
 import { Footer } from "@/components/Footer"
@@ -22,7 +22,17 @@ export default function Portfolio() {
               Karman Singh
             </h1>
             <p className="text-sm sm:text-base text-[#888] mb-6">20 y/o CS undergrad</p>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-5 flex-wrap">
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#666] hover:text-[#E8753A] transition-colors flex items-center gap-1.5"
+                title="Resume"
+              >
+                <FileText className="w-4 h-4" />
+                <span className="text-xs font-archivo font-medium">Resume</span>
+              </a>
               <a
                 href="https://github.com/Karman-singh15"
                 target="_blank"
