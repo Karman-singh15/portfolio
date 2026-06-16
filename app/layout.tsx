@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${archivoBlack.variable} ${archivo.variable} antialiased selection:bg-[#4CAF50]/30 selection:text-white`}>
+      <body className={`${archivoBlack.variable} ${archivo.variable} antialiased selection:bg-[#E8753A]/30 selection:text-white`}>
         {children}
       </body>
     </html>

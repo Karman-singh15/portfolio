@@ -5,13 +5,20 @@
 @layer base {
   :root {
     --background: 0 0% 7%;
-    --foreground: 0 0% 100%;
+    --foreground: 0 0% 90%;
+    --accent: 22 85% 55%;
+    --card: 0 0% 12%;
+    --muted: 0 0% 55%;
   }
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground selection:bg-green-500/30;
+    @apply bg-[#0F0F0F] text-[#E5E5E5] antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
 
@@ -24,3 +31,23 @@
     font-family: var(--font-archivo), sans-serif;
   }
 }
+
+/* Responsive GitHub Activity calendar styles */
+.responsive-calendar .react-activity-calendar {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.responsive-calendar .react-activity-calendar__scroll-container {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.responsive-calendar svg.react-activity-calendar__calendar {
+  width: 100% !important;
+  max-width: 720px !important;
+  height: auto !important;
+}
+
