@@ -52,7 +52,7 @@ export default function Portfolio() {
                 <span className="sr-only">Twitter</span>
               </a>
               <a
-                href="https://linkedin.com/in/karman-singh-151610217"
+                href="https://linkedin.com/in/karmansingh15"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#666] hover:text-[#E8753A] transition-colors"
